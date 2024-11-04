@@ -8,6 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CharacterScreen from "./screens/CharacterScreen";
 import { TextButton } from "./components/ui/TextButton";
 import { colors } from "./constants/colors";
+import { GameContext, GameContextProvider } from "./store/game-context";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -52,20 +53,22 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Game"
-            component={GameNavigation}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Character"
-            component={CharacterScreen}
-            options={{ headerBackTitle: "Back" }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <GameContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Game"
+              component={GameNavigation}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Character"
+              component={CharacterScreen}
+              options={{ headerBackTitle: "Back" }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </GameContextProvider>
     </>
   );
 }
