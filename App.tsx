@@ -6,13 +6,26 @@ import HomeScreen from "./screens/HomeScreen";
 import ListScreen from "./screens/ListScreen";
 import { Ionicons } from "@expo/vector-icons";
 import CharacterScreen from "./screens/CharacterScreen";
+import { TextButton } from "./components/ui/TextButton";
+import { colors } from "./constants/colors";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// TODO: Reset button functionality
 function GameNavigation() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        headerRight: () => (
+          <TextButton
+            text="Reset"
+            color={colors.accent}
+            onPress={() => console.log()}
+          />
+        ),
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
