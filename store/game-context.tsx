@@ -2,6 +2,15 @@ import React, { createContext, useReducer, useEffect } from "react";
 import { Text } from "react-native";
 import { LoadingOverlay } from "../components/ui/LoadingOverlay";
 
+// TODO: delete
+type TState = {
+  totalAttempts: number;
+  successfulAttempts: number;
+  failedAttempts: number;
+  guessedCharacters: { id: string; attempts: boolean[] }[];
+  characters: any[];
+};
+
 export const GameContext = createContext({
   data: {},
   addGuessedCharacters: ({
@@ -20,15 +29,6 @@ export const GameContext = createContext({
   }) => {},
   resetGame: () => {},
 });
-
-// TODO: delete
-type TState = {
-  totalAttempts: number;
-  successfulAttempts: number;
-  failedAttempts: number;
-  guessedCharacters: { id: string; attempts: boolean[] }[];
-  characters: any[];
-};
 
 const initialState = {
   totalAttempts: 0,
@@ -73,9 +73,9 @@ const gameReducer = (state, action) => {
       );
       return state;
     case "RESET":
-      return (initialState.characters = state.characters);
+      return { ...initialState, characters: state.characters };
     case "SET":
-      return (state.characters = action.payload);
+      return { ...state, characters: action.payload };
   }
 };
 
@@ -138,7 +138,8 @@ export function GameContextProvider({ children }: React.ReactNode) {
     resetGame: resetGame,
   };
 
-  if (!gameState) {
+  // console.log(gameState.characters, "gameState");
+  if (gameState.characters.length === 0) {
     return <LoadingOverlay />;
   }
 
