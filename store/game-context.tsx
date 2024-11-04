@@ -49,15 +49,15 @@ const gameReducer = (state, action) => {
   switch (action.type) {
     case "ADD":
       state.totalAttempts++;
-      state.successfulAttempts += action.payload.attempts ? 1 : 0;
-      state.failedAttempts += action.payload.attempts ? 0 : 1;
+      state.successfulAttempts += action.payload.attempt ? 1 : 0;
+      state.failedAttempts += action.payload.attempt ? 0 : 1;
       state.guessedCharacters.push({
         id: action.payload.id,
-        attempts: [action.payload.attempts],
+        attempts: [action.payload.attempt],
       });
       return state;
     case "UPDATE":
-      if (action.payload.attempts) {
+      if (action.payload.attempt) {
         state.successfulAttempts += 1;
         state.failedAttempts -= 1;
       } else {
@@ -68,8 +68,8 @@ const gameReducer = (state, action) => {
       const charIToUpdate = state.guessedCharacters.findIndex(
         (char) => char.id === action.payload.id,
       );
-      state.guessedCharacters[charIToUpdate].attempt.push(
-        action.payload.attempts,
+      state.guessedCharacters[charIToUpdate].attempts.push(
+        action.payload.attempt,
       );
       return state;
     case "RESET":

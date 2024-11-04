@@ -1,21 +1,41 @@
 import { Pressable, StyleSheet, Text } from "react-native";
+import { useState } from "react";
+
 import { colors } from "../../constants/colors";
 
 export function GameButton({
   house,
   onSelect,
+  selectedHouse,
+  isCorrect,
 }: {
   house: string;
-  onSelect: () => void;
+  onSelect: (house: string) => void;
+  selectedHouse?: string;
+  isCorrect: boolean;
 }) {
   return (
-    <Pressable style={styles.container}>
+    <Pressable
+      onPress={() => onSelect(house)}
+      disabled={!!selectedHouse && selectedHouse !== house}
+      style={({ pressed }) => [
+        pressed && styles.pressed,
+        styles.container,
+        selectedHouse === house &&
+          (isCorrect
+            ? { backgroundColor: "#57a157" }
+            : { backgroundColor: "#ea6a7f" }),
+      ]}
+    >
       <Text style={styles.house}>{house}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  pressed: {
+    opacity: 0.7,
+  },
   container: {
     margin: 5,
     flex: 1,
@@ -25,7 +45,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 60,
+    minHeight: 50,
   },
   house: {
     fontSize: 18,

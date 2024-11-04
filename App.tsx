@@ -9,12 +9,13 @@ import CharacterScreen from "./screens/CharacterScreen";
 import { TextButton } from "./components/ui/TextButton";
 import { colors } from "./constants/colors";
 import { GameContext, GameContextProvider } from "./store/game-context";
+import { useContext } from "react";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// TODO: Reset button functionality
 function GameNavigation() {
+  const gameCtx = useContext(GameContext);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -22,7 +23,7 @@ function GameNavigation() {
           <TextButton
             text="Reset"
             color={colors.accent}
-            onPress={() => console.log()}
+            onPress={() => gameCtx.resetGame()}
           />
         ),
       }}
