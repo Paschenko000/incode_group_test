@@ -138,9 +138,9 @@ export function GameContextProvider({ children }: React.ReactNode) {
     resetGame: resetGame,
   };
 
-  // if (!gameState) {
-  return <LoadingOverlay />;
-  // }
+  if (!gameState) {
+    return <LoadingOverlay />;
+  }
 
-  // return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
+  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }
