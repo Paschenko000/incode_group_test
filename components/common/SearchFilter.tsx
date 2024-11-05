@@ -20,7 +20,12 @@ export function SearchFilter({
         onChange={(e) => onChange(e.nativeEvent.text)}
       />
       <Pressable onPress={() => inputRef.current?.blur()}>
-        <Ionicons name="search-outline" color={colors.darkGrey} size={22} />
+        <Ionicons
+          style={styles.icon}
+          name="search-outline"
+          color={colors.darkGrey}
+          size={22}
+        />
       </Pressable>
     </View>
   );
@@ -41,5 +46,8 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
     fontSize: 16,
+  },
+  icon: {
+    paddingRight: 10,
   },
 });

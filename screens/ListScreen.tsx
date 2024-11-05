@@ -36,7 +36,7 @@ export default function ListScreen({ navigation }) {
   }, [searchQuery, guessedCharacters]);
 
   function handleSearch(query) {
-    // setSearchQuery(query);
+    setSearchQuery(query);
   }
 
   function characterRenderItem(itemData) {
