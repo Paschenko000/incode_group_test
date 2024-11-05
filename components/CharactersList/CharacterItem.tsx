@@ -22,7 +22,7 @@ export function CharacterItem({
     });
   }
 
-  const containsFailedAttempts = attempts.includes(false);
+  const containsSuccessfulAttempts = attempts.includes(true);
 
   return (
     <View style={styles.container}>
@@ -45,7 +45,13 @@ export function CharacterItem({
       </Pressable>
 
       <View style={styles.buttonsContainer}>
-        {containsFailedAttempts ? (
+        {containsSuccessfulAttempts ? (
+          <Ionicons
+            name="checkmark-circle-outline"
+            size={30}
+            color={colors.green}
+          />
+        ) : (
           <>
             <Pressable>
               <Ionicons
@@ -60,12 +66,6 @@ export function CharacterItem({
               color={colors.red}
             />
           </>
-        ) : (
-          <Ionicons
-            name="checkmark-circle-outline"
-            size={30}
-            color={colors.green}
-          />
         )}
       </View>
     </View>

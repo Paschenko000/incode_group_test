@@ -1,4 +1,10 @@
-import { Animated, FlatList, StyleSheet, View } from "react-native";
+import {
+  Animated,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { GameContext } from "../store/game-context";
 import { colors } from "../constants/colors";
@@ -19,35 +25,72 @@ const houses = [
 //TODO: fix current character when user resets the game;
 export default function HomeScreen() {
   const [currentCharacter, setCurrentCharacter] = useState(0);
-  const [nextBtnIsDisabled, setNextBtnIsDisabled] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedHouse, setSelectedHouse] = useState<{
     house: string;
     isCorrect: boolean;
   }>(null);
 
+  const gameCtx = useContext(GameContext);
+
+  useEffect(() => {
+    setCurrentCharacter(getRandomCharIndex());
+  }, []);
+
   useEffect(() => {
     setSelectedHouse(null);
   }, [currentCharacter]);
 
-  const gameCtx = useContext(GameContext);
+  function getRandomCharIndex() {
+    return Math.floor(Math.random() * gameCtx.data.characters.length);
+  }
 
   function handleSelectHouse(house: string) {
     const { id, house: gameHouse } = gameCtx.data.characters[currentCharacter];
     const isCorrect = gameHouse === house;
 
-    gameCtx.addGuessedCharacters({ attempt: isCorrect, id });
+    if (gameCtx.data.guessedCharacters.includes((item) => item.id === id)) {
+      gameCtx.updateGuessedCharacters({ attempt: isCorrect, id });
+    } else {
+      gameCtx.addGuessedCharacters({ attempt: isCorrect, id });
+    }
     setSelectedHouse({ house, isCorrect });
-
-    setNextBtnIsDisabled(false);
   }
 
-  function handleNextBtnPress() {
-    setCurrentCharacter(() => currentCharacter + 1);
-    setNextBtnIsDisabled(true);
+  function handleRefresh() {
+    setRefreshing(true);
+    let random = getRandomCharIndex();
+
+    while (random === currentCharacter) {
+      random = getRandomCharIndex();
+    }
+
+    if (
+      gameCtx.data.guessedCharacters.findIndex(
+        (item) => item.id === gameCtx.data.characters[random].id,
+      ) !== -1
+    ) {
+      const guessedChar = gameCtx.data.guessedCharacters[random];
+      if (
+        !guessedChar?.attempts.includes(true) ||
+        guessedChar.attempts.length === 0
+      ) {
+        setCurrentCharacter(random);
+      }
+    } else {
+      setCurrentCharacter(random);
+    }
+
+    setRefreshing(false);
   }
 
   return (
-    <ScrollView style={styles.scollContainer}>
+    <ScrollView
+      style={styles.scollContainer}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+    >
       <View style={styles.container}>
         <View style={styles.scoreContainer}>
           <ScoreContainer score={gameCtx.data.totalAttempts} name="Total" />
@@ -78,13 +121,6 @@ export default function HomeScreen() {
               />
             )}
             numColumns={2}
-          />
-          <IconButton
-            icon="chevron-forward-outline"
-            text="Next"
-            disabled={nextBtnIsDisabled}
-            onPress={handleNextBtnPress}
-            style={{ alignSelf: "flex-end" }}
           />
         </View>
       </View>

@@ -14,7 +14,7 @@ export default function ListScreen() {
     const character = gameCtx.data.characters.find(
       (item) => item.id === itemData.item.id,
     );
-    console.log(character, "character");
+
     return (
       <CharacterItem
         name={character.name}
