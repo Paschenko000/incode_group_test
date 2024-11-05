@@ -1,8 +1,7 @@
-import React, { createContext, useReducer, useEffect } from "react";
+import React, { createContext, useReducer, useEffect, useContext } from "react";
 import { Text } from "react-native";
 import { LoadingOverlay } from "../components/ui/LoadingOverlay";
 
-// TODO: delete
 type TState = {
   totalAttempts: number;
   successfulAttempts: number;
@@ -11,8 +10,19 @@ type TState = {
   characters: any[];
 };
 
-export const GameContext = createContext({
-  data: {},
+type TGameContext =
+  | {
+      data: TState;
+      addGuessedCharacters: ({ attempt: boolean, id: string }) => void;
+      updateGuessedCharacters: ({ attempt: boolean, id: string }) => void;
+      resetGame: () => void;
+    }
+  | undefined;
+
+export const GameContext = createContext<TGameContext>({
+  data: {
+    ...initialState,
+  },
   addGuessedCharacters: ({
     attempt,
     id,
@@ -36,6 +46,7 @@ const initialState = {
   failedAttempts: 0,
   guessedCharacters: [],
   characters: [],
+  gameId: 0,
 };
 
 enum EGameReducerAction {
@@ -47,33 +58,45 @@ enum EGameReducerAction {
 
 const gameReducer = (state, action) => {
   switch (action.type) {
-    case "ADD":
-      state.totalAttempts++;
-      state.successfulAttempts += action.payload.attempt ? 1 : 0;
-      state.failedAttempts += action.payload.attempt ? 0 : 1;
-      state.guessedCharacters.push({
-        id: action.payload.id,
-        attempts: [action.payload.attempt],
-      });
-      return state;
-    case "UPDATE":
+    case "ADD": {
+      const newState = { ...state };
+      newState.totalAttempts++;
+      newState.successfulAttempts += action.payload.attempt ? 1 : 0;
+      newState.failedAttempts += action.payload.attempt ? 0 : 1;
+      newState.guessedCharacters = [
+        ...newState.guessedCharacters,
+        { id: action.payload.id, attempts: [action.payload.attempt] },
+      ];
+
+      return newState;
+    }
+    case "UPDATE": {
+      const newState = { ...state };
       if (action.payload.attempt) {
-        state.successfulAttempts += 1;
-        state.failedAttempts -= 1;
-      } else {
-        state.successfulAttempts -= 1;
-        state.failedAttempts += 1;
+        newState.successfulAttempts += 1;
+        newState.failedAttempts -= 1;
       }
 
-      const charIToUpdate = state.guessedCharacters.findIndex(
+      const charIToUpdate = newState.guessedCharacters.findIndex(
         (char) => char.id === action.payload.id,
       );
-      state.guessedCharacters[charIToUpdate].attempts.push(
-        action.payload.attempt,
-      );
-      return state;
+      newState.guessedCharacters = [...newState.guessedCharacters];
+      newState.guessedCharacters[charIToUpdate] = {
+        ...newState.guessedCharacters[charIToUpdate],
+        attempts: [
+          ...newState.guessedCharacters[charIToUpdate].attempts,
+          action.payload.attempt,
+        ],
+      };
+
+      return newState;
+    }
     case "RESET":
-      return { ...initialState, characters: state.characters };
+      return {
+        ...initialState,
+        characters: state.characters,
+        gameId: state.gameId + 1,
+      };
     case "SET":
       return { ...state, characters: action.payload };
   }
@@ -145,3 +168,12 @@ export function GameContextProvider({ children }: React.ReactNode) {
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }
+
+export const useGameContext = () => {
+  const context = useContext(GameContext);
+  if (!context) {
+    throw new Error("useGameContext must be used within a GameContextProvider");
+  }
+
+  return context;
+};

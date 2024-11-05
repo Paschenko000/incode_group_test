@@ -2,19 +2,20 @@ import { Pressable, StyleSheet, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../constants/colors";
 
+type IconButtonProps = {
+  icon: string;
+  text: string;
+  disabled: boolean;
+  style?: object;
+  onPress: () => void;
+};
 export function IconButton({
   icon,
   text,
   disabled,
   style,
   onPress,
-}: {
-  icon: string;
-  text: string;
-  disabled: boolean;
-  style?: object;
-  onPress: () => void;
-}) {
+}: IconButtonProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -26,7 +27,6 @@ export function IconButton({
     </Pressable>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",

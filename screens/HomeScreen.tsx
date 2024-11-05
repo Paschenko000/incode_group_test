@@ -5,25 +5,23 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { useContext, useEffect, useState } from "react";
-import { GameContext } from "../store/game-context";
+import { useEffect, useState } from "react";
+import { GameContext, useGameContext } from "../store/game-context";
 import { colors } from "../constants/colors";
 import { Character } from "../components/Game/Character";
 import { GameButton } from "../components/ui/GameButton";
 import ScrollView = Animated.ScrollView;
-import { IconButton } from "../components/ui/IconButton";
 import { ScoreContainer } from "../components/common/ScoreContainer";
-
-const houses = [
-  "Gryffindor",
-  "Slytherin",
-  "Ravenclaw",
-  "Hufflepuff",
-  "Not in House",
-];
+import { houses } from "../constants/houses";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { IconButton } from "../components/ui/IconButton";
 
 //TODO: fix current character when user resets the game;
-export default function HomeScreen() {
+export default function HomeScreen({ route }: NativeStackScreenProps<any>) {
+  const characterId = route.params?.characterId;
+  const gameCtx = useGameContext();
+
+  const [nextBtnIsDisabled, setNextBtnIsDisabled] = useState(true);
   const [currentCharacter, setCurrentCharacter] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedHouse, setSelectedHouse] = useState<{
@@ -31,11 +29,17 @@ export default function HomeScreen() {
     isCorrect: boolean;
   }>(null);
 
-  const gameCtx = useContext(GameContext);
-
   useEffect(() => {
-    setCurrentCharacter(getRandomCharIndex());
-  }, []);
+    setSelectedHouse(null);
+    if (characterId) {
+      const index = gameCtx.data.characters.findIndex(
+        (item) => item.id === characterId,
+      );
+      setCurrentCharacter(index);
+    } else {
+      setCurrentCharacter(getRandomCharIndex());
+    }
+  }, [characterId, gameCtx.data.gameId]);
 
   useEffect(() => {
     setSelectedHouse(null);
@@ -49,12 +53,13 @@ export default function HomeScreen() {
     const { id, house: gameHouse } = gameCtx.data.characters[currentCharacter];
     const isCorrect = gameHouse === house;
 
-    if (gameCtx.data.guessedCharacters.includes((item) => item.id === id)) {
+    if (!!gameCtx.data.guessedCharacters.find((item) => item.id === id)) {
       gameCtx.updateGuessedCharacters({ attempt: isCorrect, id });
     } else {
       gameCtx.addGuessedCharacters({ attempt: isCorrect, id });
     }
     setSelectedHouse({ house, isCorrect });
+    setNextBtnIsDisabled(false);
   }
 
   function handleRefresh() {
@@ -82,6 +87,7 @@ export default function HomeScreen() {
     }
 
     setRefreshing(false);
+    setNextBtnIsDisabled(true);
   }
 
   return (
@@ -121,6 +127,14 @@ export default function HomeScreen() {
               />
             )}
             numColumns={2}
+          />
+
+          <IconButton
+            icon="chevron-forward-outline"
+            text="Next"
+            disabled={nextBtnIsDisabled}
+            onPress={handleRefresh}
+            style={{ alignSelf: "flex-end" }}
           />
         </View>
       </View>

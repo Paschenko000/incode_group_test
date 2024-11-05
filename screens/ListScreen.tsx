@@ -1,34 +1,42 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
-import { useContext, useState } from "react";
-import { GameContext } from "../store/game-context";
+import { useEffect, useMemo, useReducer, useState } from "react";
+import { GameContext, useGameContext } from "../store/game-context";
 import { colors } from "../constants/colors";
 import { ScoreContainer } from "../components/common/ScoreContainer";
 import { SearchFilter } from "../components/common/SearchFilter";
 import { CharacterItem } from "../components/CharactersList/CharacterItem";
 
-export default function ListScreen() {
-  const gameCtx = useContext(GameContext);
+export default function ListScreen({ navigation }) {
+  const gameCtx = useGameContext();
 
-  const guessedCharacters =
-    gameCtx.data.guessedCharacters &&
-    gameCtx.data.characters.filter((item) =>
-      gameCtx.data.guessedCharacters.find((guessed) => guessed.id === item.id),
-    );
+  const guessedCharacters = useMemo(
+    () =>
+      gameCtx.data.guessedCharacters &&
+      gameCtx.data.characters.filter((item) =>
+        gameCtx.data.guessedCharacters.find(
+          (guessed) => guessed.id === item.id,
+        ),
+      ),
+    [gameCtx.data.guessedCharacters],
+  );
 
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(guessedCharacters);
 
-  function handleSearch(text) {
-    setSearchQuery(text);
-    if (text === "") {
+  useEffect(() => {
+    if (searchQuery === "") {
       setFilteredData(guessedCharacters);
     } else {
       const filtered = guessedCharacters.filter((item) =>
-        item.name.toLowerCase().includes(text.toLowerCase()),
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       setFilteredData(filtered);
     }
+  }, [searchQuery, guessedCharacters]);
+
+  function handleSearch(query) {
+    // setSearchQuery(query);
   }
 
   function characterRenderItem(itemData) {
@@ -38,6 +46,7 @@ export default function ListScreen() {
 
     return (
       <CharacterItem
+        navigation={navigation}
         name={itemData.item.name}
         id={itemData.item.id}
         image={itemData.item.image}

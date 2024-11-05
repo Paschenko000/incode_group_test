@@ -8,17 +8,25 @@ type CharacterItemProps = {
   name: string;
   image: string;
   attempts: boolean[];
+  navigation: any;
 };
 export function CharacterItem({
   name,
   image,
   id,
   attempts,
+  navigation,
 }: CharacterItemProps) {
-  const navigation = useNavigation();
   function handleSelectCharacter() {
     navigation.navigate("Details", {
       characterId: id,
+    });
+  }
+
+  function handleResetCharacter() {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Home", params: { characterId: id } }],
     });
   }
 
@@ -27,7 +35,10 @@ export function CharacterItem({
   return (
     <View style={styles.container}>
       <Pressable
-        style={styles.characterContainer}
+        style={({ pressed }) => [
+          pressed && styles.pressed,
+          styles.characterContainer,
+        ]}
         onPress={handleSelectCharacter}
       >
         {image ? (
@@ -53,7 +64,10 @@ export function CharacterItem({
           />
         ) : (
           <>
-            <Pressable>
+            <Pressable
+              onPress={handleResetCharacter}
+              style={({ pressed }) => pressed && styles.pressed}
+            >
               <Ionicons
                 name="refresh-outline"
                 size={30}
@@ -73,6 +87,9 @@ export function CharacterItem({
 }
 
 const styles = StyleSheet.create({
+  pressed: {
+    opacity: 0.7,
+  },
   container: {
     flex: 1,
     flexDirection: "row",

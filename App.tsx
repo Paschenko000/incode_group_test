@@ -8,14 +8,17 @@ import { Ionicons } from "@expo/vector-icons";
 import DetailsScreen from "./screens/DetailsScreen";
 import { TextButton } from "./components/ui/TextButton";
 import { colors } from "./constants/colors";
-import { GameContext, GameContextProvider } from "./store/game-context";
-import { useContext } from "react";
+import {
+  GameContext,
+  GameContextProvider,
+  useGameContext,
+} from "./store/game-context";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function GameNavigation() {
-  const gameCtx = useContext(GameContext);
+  const gameCtx = useGameContext();
   return (
     <Tab.Navigator
       screenOptions={{

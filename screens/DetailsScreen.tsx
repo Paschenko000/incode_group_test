@@ -1,7 +1,7 @@
 import { Image, Text, View, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useContext, useLayoutEffect } from "react";
-import { GameContext } from "../store/game-context";
+import { useLayoutEffect } from "react";
+import { GameContext, useGameContext } from "../store/game-context";
 import { colors } from "../constants/colors";
 
 export default function DetailsScreen({
@@ -10,7 +10,7 @@ export default function DetailsScreen({
 }: NativeStackScreenProps<any>) {
   const characterId = route.params?.characterId;
 
-  const gameCtx = useContext(GameContext);
+  const gameCtx = useGameContext();
   const character = gameCtx.data.characters.find(
     (item) => item.id === characterId,
   );
@@ -25,8 +25,6 @@ export default function DetailsScreen({
       title: character.name,
     });
   }, [navigation, characterId]);
-
-  console.log(character);
 
   return (
     <View style={styles.container}>
@@ -48,17 +46,22 @@ export default function DetailsScreen({
           </Text>
           <Text style={styles.category}>
             Date of birth:{" "}
-            <Text style={styles.text}>{character.dateOfBirth}</Text>
+            <Text style={styles.text}>
+              {character.dateOfBirth ? character.dateOfBirth : "no information"}
+            </Text>
           </Text>
           <Text style={styles.category}>
-            Actor/Actress: <Text style={styles.text}>{character.actor}</Text>
+            Actor/Actress:{" "}
+            <Text style={styles.text}>
+              {character.actor ? character.actor : "no information"}
+            </Text>
           </Text>
           <Text style={styles.category}>
             Species: <Text style={styles.text}>{character.species}</Text>
           </Text>
         </View>
       ) : (
-        <Text>Access denied</Text>
+        <Text style={styles.denied}>Access denied</Text>
       )}
     </View>
   );
@@ -89,5 +92,11 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: "400",
+  },
+  denied: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: colors.red,
+    textAlign: "center",
   },
 });
