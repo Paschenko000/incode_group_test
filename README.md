@@ -20,4 +20,6 @@ Technologies Used
 
 Images & Videos 
 
-Images and videos showcasing the app in use and in a simulator are available in the image folder in this repository. This includes demonstrations of basic navigation and interaction.
+Images and videos showcasing the app in use and in a simulator are available in the showcase_images folder in this repository. This includes demonstrations of basic navigation and interaction.
+
+Images and videos are also located on google drive at the following link: https://drive.google.com/drive/folders/1ueoehZbaMxyS7Af8aefhTk4pCRkS5m8X?usp=drive_link
