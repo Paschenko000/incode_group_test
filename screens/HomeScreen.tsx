@@ -21,7 +21,6 @@ export default function HomeScreen({ route }: NativeStackScreenProps<any>) {
   const characterId = route.params?.characterId;
   const gameCtx = useGameContext();
 
-  const [nextBtnIsDisabled, setNextBtnIsDisabled] = useState(true);
   const [currentCharacter, setCurrentCharacter] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedHouse, setSelectedHouse] = useState<{
@@ -59,7 +58,6 @@ export default function HomeScreen({ route }: NativeStackScreenProps<any>) {
       gameCtx.addGuessedCharacters({ attempt: isCorrect, id });
     }
     setSelectedHouse({ house, isCorrect });
-    setNextBtnIsDisabled(false);
   }
 
   function handleRefresh() {
@@ -87,7 +85,6 @@ export default function HomeScreen({ route }: NativeStackScreenProps<any>) {
     }
 
     setRefreshing(false);
-    setNextBtnIsDisabled(true);
   }
 
   return (
@@ -132,7 +129,6 @@ export default function HomeScreen({ route }: NativeStackScreenProps<any>) {
           <IconButton
             icon="chevron-forward-outline"
             text="Next"
-            disabled={nextBtnIsDisabled}
             onPress={handleRefresh}
             style={{ alignSelf: "flex-end" }}
           />

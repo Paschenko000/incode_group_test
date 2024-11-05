@@ -5,23 +5,12 @@ import { colors } from "../../constants/colors";
 type IconButtonProps = {
   icon: string;
   text: string;
-  disabled: boolean;
   style?: object;
   onPress: () => void;
 };
-export function IconButton({
-  icon,
-  text,
-  disabled,
-  style,
-  onPress,
-}: IconButtonProps) {
+export function IconButton({ icon, text, style, onPress }: IconButtonProps) {
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      style={[styles.container, style]}
-    >
+    <Pressable onPress={onPress} style={[styles.container, style]}>
       <Text style={styles.text}>{text}</Text>
       <Ionicons name={icon} color={colors.accent} size={20} />
     </Pressable>
