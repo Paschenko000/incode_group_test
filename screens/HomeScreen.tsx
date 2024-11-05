@@ -1,12 +1,12 @@
 import { Animated, FlatList, StyleSheet, View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { GameContext } from "../store/game-context";
-import { ScoreContainer } from "../components/ui/ScoreContainer";
 import { colors } from "../constants/colors";
 import { Character } from "../components/Game/Character";
 import { GameButton } from "../components/ui/GameButton";
 import ScrollView = Animated.ScrollView;
 import { IconButton } from "../components/ui/IconButton";
+import { ScoreContainer } from "../components/common/ScoreContainer";
 
 const houses = [
   "Gryffindor",
@@ -95,7 +95,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   scrollContainer: {
     backgroundColor: colors.background,
-
     flex: 1,
   },
   container: {
@@ -106,7 +105,6 @@ const styles = StyleSheet.create({
   scoreContainer: {
     width: "100%",
     gap: 10,
-    marginHorizontal: 5,
     justifyContent: "space-between",
     flexDirection: "row",
   },

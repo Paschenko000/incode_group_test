@@ -5,7 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "./screens/HomeScreen";
 import ListScreen from "./screens/ListScreen";
 import { Ionicons } from "@expo/vector-icons";
-import CharacterScreen from "./screens/CharacterScreen";
+import DetailsScreen from "./screens/DetailsScreen";
 import { TextButton } from "./components/ui/TextButton";
 import { colors } from "./constants/colors";
 import { GameContext, GameContextProvider } from "./store/game-context";
@@ -63,8 +63,8 @@ export default function App() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="Character"
-              component={CharacterScreen}
+              name="Details"
+              component={DetailsScreen}
               options={{ headerBackTitle: "Back" }}
             />
           </Stack.Navigator>
