@@ -1,6 +1,6 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { GameContext } from "../store/game-context";
 import { colors } from "../constants/colors";
 import { ScoreContainer } from "../components/common/ScoreContainer";
@@ -10,17 +10,38 @@ import { CharacterItem } from "../components/CharactersList/CharacterItem";
 export default function ListScreen() {
   const gameCtx = useContext(GameContext);
 
-  function characterRenderItem(itemData) {
-    const character = gameCtx.data.characters.find(
-      (item) => item.id === itemData.item.id,
+  const guessedCharacters =
+    gameCtx.data.guessedCharacters &&
+    gameCtx.data.characters.filter((item) =>
+      gameCtx.data.guessedCharacters.find((guessed) => guessed.id === item.id),
     );
+
+  const [searchQuery, setSearchQuery] = useState();
+  const [filteredData, setFilteredData] = useState(guessedCharacters);
+
+  function handleSearch(text) {
+    setSearchQuery(text);
+    if (text === "") {
+      setFilteredData(guessedCharacters);
+    } else {
+      const filtered = guessedCharacters.filter((item) =>
+        item.name.toLowerCase().includes(text.toLowerCase()),
+      );
+      setFilteredData(filtered);
+    }
+  }
+
+  function characterRenderItem(itemData) {
+    const attempts = gameCtx.data.guessedCharacters.find(
+      (item) => item.id === itemData.item.id,
+    ).attempts;
 
     return (
       <CharacterItem
-        name={character.name}
-        id={character.id}
-        image={character.image}
-        attempts={itemData.item.attempts}
+        name={itemData.item.name}
+        id={itemData.item.id}
+        image={itemData.item.image}
+        attempts={attempts}
       />
     );
   }
@@ -36,15 +57,24 @@ export default function ListScreen() {
           />
           <ScoreContainer score={gameCtx.data.failedAttempts} name="Failed" />
         </View>
-
-        <SearchFilter />
+        {gameCtx.data.guessedCharacters.length > 0 && (
+          <SearchFilter onChange={handleSearch} />
+        )}
       </View>
 
-      <FlatList
-        data={gameCtx.data.guessedCharacters}
-        renderItem={characterRenderItem}
-        keyExtractor={(item) => item.id}
-      />
+      {gameCtx.data.guessedCharacters.length === 0 ? (
+        <Text style={styles.fallbackText}>
+          You will see your completed characters here once you start the quiz.
+        </Text>
+      ) : filteredData.length === 0 ? (
+        <Text style={styles.fallbackText}>No characters found</Text>
+      ) : (
+        <FlatList
+          data={filteredData}
+          renderItem={characterRenderItem}
+          keyExtractor={(item) => item.id}
+        />
+      )}
     </View>
   );
 }
@@ -65,5 +95,10 @@ const styles = StyleSheet.create({
     gap: 10,
     justifyContent: "space-between",
     flexDirection: "row",
+  },
+  fallbackText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: "auto",
   },
 });

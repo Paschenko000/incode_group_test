@@ -41,7 +41,10 @@ export default function DetailsScreen({
       {access ? (
         <View style={styles.infoContainer}>
           <Text style={styles.category}>
-            House: <Text style={styles.text}>{character.house}</Text>
+            House:{" "}
+            <Text style={styles.text}>
+              {character.house ? character.house : "not in house"}
+            </Text>
           </Text>
           <Text style={styles.category}>
             Date of birth:{" "}

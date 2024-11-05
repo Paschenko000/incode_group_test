@@ -2,13 +2,18 @@ import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../constants/colors";
 
-export function SearchFilter() {
+export function SearchFilter({
+  onChange,
+}: {
+  onChange: (text: string) => void;
+}) {
   return (
     <View style={styles.searchContainer}>
       <TextInput
         placeholder="Find characters..."
         style={styles.input}
         placeholderTextColor={colors.darkGrey}
+        onChange={(e) => onChange(e.nativeEvent.text)}
       />
       <Pressable>
         <Ionicons name="search-outline" color={colors.darkGrey} size={22} />
