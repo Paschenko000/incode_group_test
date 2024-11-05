@@ -4,7 +4,14 @@ import { colors } from "../../constants/colors";
 export function Character({ image, name }: { image: string; name: string }) {
   return (
     <View style={styles.container}>
-      <Image source={{ uri: image }} style={styles.image} />
+      {image ? (
+        <Image source={{ uri: image }} style={styles.image} />
+      ) : (
+        <View style={[styles.image, { backgroundColor: colors.lightGrey }]}>
+          <Text> No image found</Text>
+        </View>
+      )}
+
       <Text style={styles.name}>{name}</Text>
     </View>
   );
@@ -22,6 +29,8 @@ const styles = StyleSheet.create({
     height: 280,
     objectFit: "cover",
     borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   name: {
     color: colors.text,

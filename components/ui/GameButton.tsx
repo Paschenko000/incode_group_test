@@ -17,14 +17,13 @@ export function GameButton({
   return (
     <Pressable
       onPress={() => onSelect(house)}
-      disabled={!!selectedHouse && selectedHouse !== house}
+      disabled={!!selectedHouse}
       style={({ pressed }) => [
         pressed && styles.pressed,
         styles.container,
-        selectedHouse === house &&
-          (isCorrect
-            ? { backgroundColor: "#57a157" }
-            : { backgroundColor: "#ea6a7f" }),
+        selectedHouse === house && {
+          backgroundColor: isCorrect ? colors.green : colors.red,
+        },
       ]}
     >
       <Text style={styles.house}>{house}</Text>

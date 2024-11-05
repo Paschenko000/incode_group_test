@@ -16,6 +16,7 @@ const houses = [
   "Not in House",
 ];
 
+//TODO: fix current character when user resets the game;
 export default function HomeScreen() {
   const [currentCharacter, setCurrentCharacter] = useState(0);
   const [nextBtnIsDisabled, setNextBtnIsDisabled] = useState(true);
@@ -28,13 +29,13 @@ export default function HomeScreen() {
     setSelectedHouse(null);
   }, [currentCharacter]);
 
-  const game = useContext(GameContext);
+  const gameCtx = useContext(GameContext);
 
   function handleSelectHouse(house: string) {
-    const { id, house: gameHouse } = game.data.characters[currentCharacter];
+    const { id, house: gameHouse } = gameCtx.data.characters[currentCharacter];
     const isCorrect = gameHouse === house;
 
-    game.addGuessedCharacters({ attempt: isCorrect, id });
+    gameCtx.addGuessedCharacters({ attempt: isCorrect, id });
     setSelectedHouse({ house, isCorrect });
 
     setNextBtnIsDisabled(false);
@@ -49,14 +50,17 @@ export default function HomeScreen() {
     <ScrollView style={styles.scollContainer}>
       <View style={styles.container}>
         <View style={styles.scoreContainer}>
-          <ScoreContainer score={game.data.totalAttempts} name="Total" />
-          <ScoreContainer score={game.data.successfulAttempts} name="Success" />
-          <ScoreContainer score={game.data.failedAttempts} name="Failed" />
+          <ScoreContainer score={gameCtx.data.totalAttempts} name="Total" />
+          <ScoreContainer
+            score={gameCtx.data.successfulAttempts}
+            name="Success"
+          />
+          <ScoreContainer score={gameCtx.data.failedAttempts} name="Failed" />
         </View>
 
         <Character
-          name={game.data.characters[currentCharacter].name}
-          image={game.data.characters[currentCharacter].image}
+          name={gameCtx.data.characters[currentCharacter].name}
+          image={gameCtx.data.characters[currentCharacter].image}
         />
 
         <View style={styles.gameButtonsContainer}>
